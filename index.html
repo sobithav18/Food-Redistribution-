@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replate</title>
+    <link rel="icon" href="logo_maybe2.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase imports -->
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-storage.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDyw0fI1x6JFdT0zXBXHXhYgjxOUMWTWI",
+            authDomain: "finalproject-6e51e.firebaseapp.com",
+            projectId: "finalproject-6e51e",
+            storageBucket: "finalproject-6e51e.appspot.com",
+            messagingSenderId: "437772394435",
+            appId: "1:437772394435:web:53fdf7ba35283d2a2c6776",
+            measurementId: "G-5SL4C3M6ZP"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+    </script>
+</head>
+<body>
+    <header class="header">
+        <img src="logo_maybe2.png" alt="Website Logo" class="logo">
+        <h1 class="site-title">Replate</h1>
+    </header>
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-container" id="loginSection">
+            <h1>Login to start</h1>
+            <img src="login_person.png" alt="Logo" class="login-logo">
+            <div class="input-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required placeholder="Enter a valid username">
+            </div>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required placeholder="Enter password">
+            </div>
+            <button onclick="login()">Login</button>
+            <p>Don't have an account? <a href="#" onclick="showSignUp()">Sign Up</a></p>
+        </div>
+
+        <!-- Sign Up Section -->
+        <div class="login-container" id="signupSection" style="display: none;">
+            <h1>Create an Account</h1>
+            <div class="input-group">
+                <label for="newUsername">Username:</label>
+                <input type="text" id="newUsername" required placeholder="Choose a username">
+            </div>
+            <div class="input-group">
+                <label for="newPassword">Password:</label>
+                <input type="password" id="newPassword" required placeholder="Choose a password">
+            </div>
+            <button onclick="signUp()">Sign Up</button>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+        </div>
+
+        <!-- Home Section -->
+        <div class="home-container" id="homeSection">
+            <div class="welcome-section">
+                <img src="home_icon.png" alt="Welcome Image" class="welcome-image">
+                <div class="welcome-text" id="welcomeText">Hi, User</div>
+            </div>
+            <div class="option-box" onclick="showDonate()">
+                <img src="donate_icon.png" alt="Donate Icon">
+                <h3>Donate Food</h3>
+                <p>Provide details and submit donations to help those in need.</p>
+            </div>
+            <div class="option-box" onclick="showInfo()">
+                <img src="info_icon.png" alt="Locations Icon">
+                <h3>Locations</h3>
+                <p>Find nearby areas in need and add new locations to support.</p>
+            </div>
+            <div class="option-box" onclick="showCollect()">
+                <img src="collect_icon.png" alt="Collect Food Icon">
+                <h3>Collect Food</h3>
+                <p>View available food items ready for pickup.</p>
+            </div>
+        </div>
+
+        <!-- Donate Section -->
+        <div class="form-container" id="donateSection" style="display: none;">
+            <h2>Donate Food</h2>
+            <div class="input-group">
+                <label for="foodName">Food Name:</label>
+                <input type="text" id="foodName" required placeholder="Enter food name">
+            </div>
+            <div class="input-group">
+                <label for="quantity">Quantity:</label>
+                <input type="text" id="quantity" required placeholder="Enter quantity">
+            </div>
+            <div class="input-group">
+                <label for="expiry">Expiry Details:</label>
+                <input type="text" id="expiry" required placeholder="Enter expiry details">
+            </div>
+            <div class="input-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" required placeholder="Enter location">
+            </div>
+            <div class="input-group">
+                <label for="image">Upload Image:</label>
+                <input type="file" id="image" accept="image/*" required>
+            </div>
+            <button onclick="submitDonation()">Submit Donation</button>
+
+            <div class="item-list" id="donationList"></div>
+            <div class="navigation">
+                <button onclick="navigateHome()">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Collect Section -->
+        <div class="form-container" id="collectSection" style="display: none;">
+            <h2>Collect Food</h2>
+            <div class="item-list" id="collectList"></div>
+            <div class="navigation">
+                <button onclick="navigateHome()">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Information Section -->
+        <div class="form-container" id="infoSection" style="display: none;">
+            <h2>Information on Locations</h2>
+            <p>Let others know where people need help</p>
+            
+            <!-- Pre-existing Locations -->
+            <div class="location-card">
+                <h3>Community Center</h3>
+                <p>Address: 123 Colony</p>
+                <p>Population: 500</p>
+                <p>Description: Supports local families in need.</p>
+            </div>
+            <div class="location-card">
+                <h3>Old Town Shelter</h3>
+                <p>Address: Green Hills Road</p>
+                <p>Population: 300</p>
+                <p>Description: Shelter for displaced families and individuals.</p>
+            </div>
+            
+            <div class="input-group">
+                <label for="infoLocation">Enter Location:</label>
+                <input type="text" id="infoLocation" required placeholder="Enter location">
+            </div>
+            <div class="input-group">
+                <label for="peopleCount">How Many People:</label>
+                <input type="number" id="peopleCount" required placeholder="Enter number of people">
+            </div>
+            <button onclick="submitLocation()">Submit Location</button>
+
+            <div class="item-list" id="infoList"></div>
+            <div class="navigation">
+                <button onclick="navigateHome()">Back to Home</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
